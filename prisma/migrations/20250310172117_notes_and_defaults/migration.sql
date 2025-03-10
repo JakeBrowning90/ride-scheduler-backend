@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Ride" ADD COLUMN     "notes" TEXT NOT NULL DEFAULT '',
+ALTER COLUMN "passengerCt" SET DEFAULT 1,
+ALTER COLUMN "jobStatus" SET DEFAULT 'new';

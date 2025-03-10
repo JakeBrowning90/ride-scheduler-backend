@@ -1,15 +1,52 @@
 const asyncHandler = require("express-async-handler");
 
+// To-do: validate create ride
+const validateRide = require("../middleware/validateRide");
+
+// Import Prisma
+const { PrismaClient } = require("@prisma/client");
+const { validationResult } = require("express-validator");
+const prisma = new PrismaClient();
+
 // exports.function_name = asyncHandler(async(req, res, next) => {
 
 // })
 
-exports.create_ride = asyncHandler(async (req, res, next) => {
-  res.json("Create ride");
-});
+exports.create_ride = [
+  validateRide,
+  asyncHandler(async (req, res, next) => {
+    // Send Error messages if validation fails
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.json(errors);
+    } else {
+      const newRide = await prisma.ride.create({
+        data: {
+          clientName: req.body.clientName,
+          clientPhone: req.body.clientPhone,
+          pickUpLocation: req.body.pickUpLocation,
+          dropOffLocation: req.body.dropOffLocation,
+          pickUpTime: req.body.pickUpTime,
+          passengerCt: req.body.passengerCt,
+          hasLuggage: req.body.hasLuggage,
+          jobStatus: req.body.jobStatus,
+          notes: req.body.notes,
+        },
+      });
+      res.json(newRide);
+    }
+  }),
+];
 
 exports.read_ride_all = asyncHandler(async (req, res, next) => {
-  res.json("Read all rides");
+  const allRides = await prisma.ride.findMany({
+    orderBy: [
+      {
+        pickUpTime: "asc",
+      },
+    ],
+  });
+  res.json(allRides);
 });
 
 exports.read_ride_one = asyncHandler(async (req, res, next) => {

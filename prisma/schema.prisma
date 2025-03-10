@@ -20,7 +20,8 @@ model Ride {
     pickUpLocation String
     dropOffLocation String
     pickUpTime DateTime
-    passengerCt Int
+    passengerCt Int @default(1)
     hasLuggage Boolean
-    jobStatus String
+    jobStatus String @default("new")
+    notes String @default("")
 }
