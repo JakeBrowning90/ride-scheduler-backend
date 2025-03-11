@@ -29,8 +29,8 @@ exports.create_ride = [
           pickUpTime: req.body.pickUpTime,
           passengerCt: req.body.passengerCt,
           hasLuggage: req.body.hasLuggage,
-          jobStatus: req.body.jobStatus,
           notes: req.body.notes,
+          jobStatus: "new",
         },
       });
       res.json(newRide);
