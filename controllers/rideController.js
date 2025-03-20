@@ -50,13 +50,44 @@ exports.read_ride_all = asyncHandler(async (req, res, next) => {
 });
 
 exports.read_ride_one = asyncHandler(async (req, res, next) => {
-  res.json("Read one ride");
+  const ride = await prisma.ride.findUnique({
+    where: { id: parseInt(req.params.id) },
+  });
+  res.json(ride);
 });
 
-exports.update_ride = asyncHandler(async (req, res, next) => {
-  res.json("Update ride");
-});
+exports.update_ride = [
+  validateRide,
+  asyncHandler(async (req, res, next) => {
+    // Send Error messages if validation fails
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.json(errors);
+    } else {
+      const updatedRide = await prisma.ride.update({
+        where: { id: parseInt(req.params.id) },
+        data: {
+          clientName: req.body.clientName,
+          clientPhone: req.body.clientPhone,
+          pickUpLocation: req.body.pickUpLocation,
+          dropOffLocation: req.body.dropOffLocation,
+          pickUpTime: req.body.pickUpTime,
+          passengerCt: req.body.passengerCt,
+          hasLuggage: req.body.hasLuggage,
+          notes: req.body.notes,
+          jobStatus: req.body.jobStatus,
+        },
+      });
+      res.json(updatedRide);
+    }
+  }),
+];
 
 exports.delete_ride = asyncHandler(async (req, res, next) => {
-  res.json("Delete ride");
+  await prisma.ride.delete({
+    where: {
+      id: parseInt(req.params.id),
+    },
+  });
+  res.json("Ride deleted");
 });
